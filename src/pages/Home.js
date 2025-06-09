@@ -1,20 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './Home.css';
 
 export default function Home() {
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
+    <div className="home-container">
       <h1>Welcome to Felizardo-Laurel Shop</h1>
       <p>Discover and shop your favorite games.</p>
-      <Link to="/products" style={{ 
-        marginTop: '1rem',
-        display: 'inline-block',
-        padding: '10px 20px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        textDecoration: 'none',
-        borderRadius: '5px'
-      }}>
+      <Link to="/products" className="browse-button">
         Browse Products
       </Link>
     </div>

@@ -4,7 +4,11 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import ProductsCatalog from './pages/ProductsCatalog'; // add this if you have a products page
+import ProductsCatalog from './pages/ProductsCatalog';
+
+function NotFound() {
+  return <h2>404 - Page Not Found</h2>;
+}
 
 function App() {
   return (
@@ -15,7 +19,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/products" element={<ProductsCatalog />} />
-        {/* Add more routes here */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

@@ -1,23 +1,27 @@
+import React from 'react';
 import { NavLink } from 'react-router-dom';
+import './Navbar.css';
 
 const Navbar = () => {
   return (
-    <nav style={{ padding: '1rem', backgroundColor: '#eee' }}>
-      <NavLink 
-        to="/" 
-        style={({ isActive }) => ({ 
-          marginRight: '1rem', 
-          fontWeight: isActive ? 'bold' : 'normal' 
-        })}
-      >
+    <nav className="navbar">
+      <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
         Home
       </NavLink>
-      <NavLink to="/register" style={{ marginRight: '1rem' }}>Register</NavLink>
-      <NavLink to="/login" style={{ marginRight: '1rem' }}>Login</NavLink>
-      <NavLink to="/cart">Cart</NavLink>
+      <NavLink to="/register" className={({ isActive }) => (isActive ? 'active' : '')}>
+        Register
+      </NavLink>
+      <NavLink to="/login" className={({ isActive }) => (isActive ? 'active' : '')}>
+        Login
+      </NavLink>
+      <NavLink to="/products" className={({ isActive }) => (isActive ? 'active' : '')}>
+        Products
+      </NavLink>
+      <NavLink to="/cart" className={({ isActive }) => (isActive ? 'active' : '')}>
+        Cart
+      </NavLink>
     </nav>
   );
 };
 
 export default Navbar;
-
