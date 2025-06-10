@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { loginUser } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
-import api from '../services/api'; // same API helper as Register
-
-const Login = () => {
+const Login = ({ setUser }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,9 +17,13 @@ const Login = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await api.post('/auth/login', formData);  // adjust endpoint
-      setMessage('Login successful!'); 
-      // Here, you might want to save tokens or user info, then redirect
+      const res = await api.post('/auth/login', formData, {
+        withCredentials: true, // if you're using cookies
+      });
+
+      setMessage('Login successful!');
+      setUser(res.data.user); // assumes backend returns user info in res.data.user
+      navigate('/admin'); // or '/products' based on role
     } catch (err) {
       setMessage(err.response?.data?.message || 'Login failed.');
     }

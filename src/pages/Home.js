@@ -5,7 +5,7 @@ import './Home.css';
 export default function Home() {
   return (
     <div className="home-container">
-      <h1>Welcome to Felizardo-Laurel Shop</h1>
+      <h1>Welcome to Capstone 3 Shop</h1>
       <p>Discover and shop your favorite games.</p>
       <Link to="/products" className="browse-button">
         Browse Products
