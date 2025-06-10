@@ -1,12 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import { loginUser, getUserDetails } from '../services/api'; // make sure getUserDetails is exported
 
-const Login = ({ setUser }) => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+const Login = ({ setUser, setToken }) => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
@@ -17,15 +14,21 @@ const Login = ({ setUser }) => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await api.post('/auth/login', formData, {
-        withCredentials: true, // if you're using cookies
-      });
+      const data = await loginUser(formData); // { access: token }
+      const token = data.access;
 
-      setMessage('Login successful!');
-      setUser(res.data.user); // assumes backend returns user info in res.data.user
-      navigate('/admin'); // or '/products' based on role
+      // Save token in localStorage and state
+      localStorage.setItem('token', token);
+      setToken(token);
+
+      const user = await getUserDetails(token); // e.g., { _id, email, isAdmin }
+      setUser(user);
+
+      setMessage('Login successful! Redirecting...');
+      navigate(user.isAdmin ? '/admin' : '/home');
+
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Login failed.');
+      setMessage(err.message || 'Login failed.');
     }
   };
 
@@ -34,21 +37,21 @@ const Login = ({ setUser }) => {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <label>Email:</label><br />
-        <input 
-          name="email" 
-          type="email" 
-          value={formData.email} 
-          onChange={handleChange} 
-          required 
+        <input
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
         /><br />
 
         <label>Password:</label><br />
-        <input 
-          name="password" 
-          type="password" 
-          value={formData.password} 
-          onChange={handleChange} 
-          required 
+        <input
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
         /><br /><br />
 
         <button type="submit">Login</button>
