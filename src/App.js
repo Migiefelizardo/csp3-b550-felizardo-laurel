@@ -18,14 +18,13 @@ function App() {
 
   return (
     <Router>
-      {/* Navigation bar receives user info and token setters */}
       <Navbar user={user} setUser={setUser} setToken={setToken} />
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login setUser={setUser} setToken={setToken} />} />
-        <Route path="/products" element={<ProductsCatalog />} />
+        <Route path="/products" element={<ProductsCatalog token={token} />} />
         <Route path="/admin" element={<AdminDashboard user={user} token={token} />} />
         <Route path="/cart" element={<CartPage token={token} />} />
         <Route path="*" element={<NotFound />} />

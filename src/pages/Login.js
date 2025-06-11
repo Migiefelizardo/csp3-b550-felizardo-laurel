@@ -25,7 +25,7 @@ const Login = ({ setUser, setToken }) => {
       setUser(user);
 
       setMessage('Login successful! Redirecting...');
-      navigate(user.isAdmin ? '/admin' : '/home');
+      navigate(user.isAdmin ? '/admin' : '/products'); // ✅ Fixed route
 
     } catch (err) {
       setMessage(err.message || 'Login failed.');
