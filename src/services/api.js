@@ -38,9 +38,8 @@ export async function loginUser(credentialsData) {
   return handleResponse(response);
 }
 
-// Get user details (requires auth token)
 export async function getUserDetails(token) {
-  const response = await fetch(`${API_BASE_URL}/users/me`, {
+  const response = await fetch(`${API_BASE_URL}/users/details`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return handleResponse(response);
@@ -54,7 +53,8 @@ export async function fetchActiveProducts() {
 }
 
 export async function fetchAllProducts(token) {
-  const response = await fetch(`${API_BASE_URL}/products`, {
+  console.log("🔐 Admin token (for fetchAllProducts):", token); // ✅ Debug token
+  const response = await fetch(`${API_BASE_URL}/products/all`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return handleResponse(response);
@@ -73,8 +73,8 @@ export async function addProduct(productData, token) {
 }
 
 export async function updateProduct(productId, productData, token) {
-  const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-    method: 'PUT',
+  const response = await fetch(`${API_BASE_URL}/products/${productId}/update`, {
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
@@ -85,13 +85,22 @@ export async function updateProduct(productId, productData, token) {
 }
 
 export async function toggleProductActive(productId, isActive, token) {
-  const response = await fetch(`${API_BASE_URL}/products/${productId}/active`, {
+  const endpoint = isActive ? 'activate' : 'archive';
+  const response = await fetch(`${API_BASE_URL}/products/${productId}/${endpoint}`, {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ active: isActive }),
+  });
+  return handleResponse(response);
+}
+
+export async function deleteProduct(productId, token) {
+  const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   return handleResponse(response);
 }
@@ -110,7 +119,7 @@ export async function updateQuantity(token, productId, quantity) {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ productId, quantity }),
   });
@@ -144,6 +153,7 @@ export default {
   addProduct,
   updateProduct,
   toggleProductActive,
+  deleteProduct,
   getCart,
   updateQuantity,
   removeFromCart,

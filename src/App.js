@@ -5,8 +5,8 @@ import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import ProductsCatalog from './pages/ProductsCatalog';
-import AdminDashboard from './pages/AdminDashboard'; // Add this if not already
-import CartPage from './pages/CartPage'; // Optional if you have it
+import AdminDashboard from './pages/AdminDashboard';
+import CartPage from './pages/CartPage';
 
 function NotFound() {
   return <h2>404 - Page Not Found</h2>;
@@ -18,21 +18,17 @@ function App() {
 
   return (
     <Router>
-      {/* ✅ Pass props here */}
+      {/* Navigation bar receives user info and token setters */}
       <Navbar user={user} setUser={setUser} setToken={setToken} />
-      
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
-        <Route
-          path="/login"
-          element={<Login setUser={setUser} setToken={setToken} />}
-        />
+        <Route path="/login" element={<Login setUser={setUser} setToken={setToken} />} />
         <Route path="/products" element={<ProductsCatalog />} />
         <Route path="/admin" element={<AdminDashboard user={user} token={token} />} />
-        <Route path="*" element={<NotFound />} />
         <Route path="/cart" element={<CartPage token={token} />} />
-
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

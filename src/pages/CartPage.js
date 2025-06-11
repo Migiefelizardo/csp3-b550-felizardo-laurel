@@ -8,8 +8,9 @@ const CartPage = ({ token }) => {
   const fetchCart = async () => {
     try {
       const data = await getCart(token);
-      setCart(data.cart);
+      setCart(data); // ✅ Fix
     } catch (err) {
+      console.error(err);
       setMessage('Failed to load cart.');
     }
   };
@@ -21,8 +22,9 @@ const CartPage = ({ token }) => {
   const handleQuantityChange = async (productId, newQty) => {
     try {
       const data = await updateQuantity(token, productId, newQty);
-      setCart(data.cart);
+      setCart(data); // ✅ Fix
     } catch (err) {
+      console.error(err);
       setMessage('Could not update quantity.');
     }
   };
@@ -30,8 +32,9 @@ const CartPage = ({ token }) => {
   const handleRemove = async (productId) => {
     try {
       const data = await removeFromCart(token, productId);
-      setCart(data.cart);
+      setCart(data); // ✅ Fix
     } catch (err) {
+      console.error(err);
       setMessage('Could not remove item.');
     }
   };
@@ -39,8 +42,9 @@ const CartPage = ({ token }) => {
   const handleClear = async () => {
     try {
       const data = await clearCart(token);
-      setCart(data.cart);
+      setCart(data); // ✅ Fix
     } catch (err) {
+      console.error(err);
       setMessage('Could not clear cart.');
     }
   };
@@ -51,7 +55,7 @@ const CartPage = ({ token }) => {
     <div style={{ padding: '1rem' }}>
       <h2>Your Cart</h2>
       {message && <p>{message}</p>}
-      {cart.cartItems.length === 0 ? (
+      {!cart.cartItems || cart.cartItems.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
         <>
@@ -65,7 +69,9 @@ const CartPage = ({ token }) => {
                     type="number"
                     min="1"
                     value={item.quantity}
-                    onChange={e => handleQuantityChange(item.productId._id, parseInt(e.target.value))}
+                    onChange={e =>
+                      handleQuantityChange(item.productId._id, parseInt(e.target.value))
+                    }
                     style={{ width: '60px', marginLeft: '0.5rem' }}
                   />
                 </p>

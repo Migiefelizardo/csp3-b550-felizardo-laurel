@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
+import './AdminDashboard.css';
 
 export default function AdminDashboard({ user, token }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
+
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -13,26 +14,30 @@ export default function AdminDashboard({ user, token }) {
     image: "",
     active: true,
   });
-  
+
   const [editingProductId, setEditingProductId] = useState(null);
 
-  useEffect(() => {
-    if (!token) return;
+ useEffect(() => {
+  if (!token) return;
 
-    async function fetchProducts() {
-      setLoading(true);
-      setError("");
-      try {
-        const data = await api.fetchAllProducts(token);
-        setProducts(data.products || data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+  console.log("Admin token:", token); // ✅ Debug log added here
+
+  async function fetchProducts() {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await api.fetchAllProducts(token);
+      setProducts(data.products || data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    fetchProducts();
-  }, [token]);
+  }
+
+  fetchProducts();
+}, [token]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +53,9 @@ export default function AdminDashboard({ user, token }) {
       if (editingProductId) {
         await api.updateProduct(editingProductId, formData, token);
         setProducts((prev) =>
-          prev.map((p) => (p.id === editingProductId ? { ...p, ...formData } : p))
+          prev.map((p) =>
+            p._id === editingProductId ? { ...p, ...formData } : p
+          )
         );
       } else {
         const newProduct = await api.addProduct(formData, token);
@@ -73,29 +80,42 @@ export default function AdminDashboard({ user, token }) {
       image: product.image || "",
       active: product.active,
     });
-    setEditingProductId(product.id);
+    setEditingProductId(product._id);
   };
 
   const toggleActive = async (product) => {
     try {
-      await api.toggleProductActive(product.id, !product.active, token);
+      await api.toggleProductActive(product._id, !product.active, token);
       setProducts((prev) =>
-        prev.map((p) => (p.id === product.id ? { ...p, active: !p.active } : p))
+        prev.map((p) =>
+          p._id === product._id ? { ...p, active: !p.active } : p
+        )
       );
     } catch {
       alert("Failed to toggle product active status");
     }
   };
 
+  const handleDelete = async (productId) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+
+    try {
+      await api.deleteProduct(productId, token);
+      setProducts((prev) => prev.filter((p) => p._id !== productId));
+    } catch {
+      alert("Failed to delete product");
+    }
+  };
+
   if (!user) return <p>Please login as admin to view this page.</p>;
   if (loading) return <p>Loading products...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
-    <div>
+    <div className="admin-dashboard">
       <h1>Admin Dashboard</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form className="product-form" onSubmit={handleSubmit}>
         <h2>{editingProductId ? "Edit Product" : "Add New Product"}</h2>
         <input
           type="text"
@@ -135,35 +155,41 @@ export default function AdminDashboard({ user, token }) {
             type="checkbox"
             name="active"
             checked={formData.active}
-            onChange={() => setFormData((f) => ({ ...f, active: !f.active }))}
+            onChange={() =>
+              setFormData((f) => ({ ...f, active: !f.active }))
+            }
           />{" "}
           Active
         </label>
-        <br />
-        <button type="submit">
-          {editingProductId ? "Update Product" : "Add Product"}
-        </button>
-        {editingProductId && (
-          <button type="button" onClick={resetForm}>
-            Cancel
+        <div className="button-group">
+          <button type="submit">
+            {editingProductId ? "Update Product" : "Add Product"}
           </button>
-        )}
+          {editingProductId && (
+            <button type="button" onClick={resetForm}>
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
 
       <h2>All Products</h2>
       {products.length === 0 && <p>No products found.</p>}
-      <ul>
+      <ul className="product-list">
         {products.map((product) => (
-          <li key={product.id}>
+          <li className="product-item" key={product._id}>
             <div>
               <strong>{product.name}</strong> (${product.price.toFixed(2)}) <br />
               <small>{product.description}</small> <br />
               <small>Status: {product.active ? "Active" : "Inactive"}</small>
             </div>
             <div>
-              <button onClick={() => handleEditClick(product)}>Edit</button>
-              <button onClick={() => toggleActive(product)}>
+              <button className="edit-btn" onClick={() => handleEditClick(product)}>Edit</button>
+              <button className="toggle-btn" onClick={() => toggleActive(product)}>
                 {product.active ? "Deactivate" : "Reactivate"}
+              </button>
+              <button className="delete-btn" onClick={() => handleDelete(product._id)}>
+                Delete
               </button>
             </div>
           </li>
