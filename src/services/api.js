@@ -1,7 +1,7 @@
-const API_BASE_URL = 'https://aecd097kaa.execute-api.us-west-2.amazonaws.com/production';
+// const API_BASE_URL = 'https://aecd097kaa.execute-api.us-west-2.amazonaws.com/production';
+const API_BASE_URL = 'http://localhost:4000';
 
 //----HELPER----//
-
 async function handleResponse(response) {
   const contentType = response.headers.get('content-type') || '';
 
@@ -19,7 +19,6 @@ async function handleResponse(response) {
 }
 
 //----USER API----//
-
 export async function registerUser(userData) {
   const response = await fetch(`${API_BASE_URL}/users/register`, {
     method: 'POST',
@@ -46,14 +45,12 @@ export async function getUserDetails(token) {
 }
 
 //----PRODUCT API----//
-
 export async function fetchActiveProducts() {
   const response = await fetch(`${API_BASE_URL}/products/active`);
   return handleResponse(response);
 }
 
 export async function fetchAllProducts(token) {
-  console.log("🔐 Admin token (for fetchAllProducts):", token); // ✅ Debug token
   const response = await fetch(`${API_BASE_URL}/products/all`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -106,10 +103,21 @@ export async function deleteProduct(productId, token) {
 }
 
 //----CART API----//
-
 export async function getCart(token) {
   const response = await fetch(`${API_BASE_URL}/cart/get-cart`, {
     headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse(response);
+}
+
+export async function addToCart(token, productId, quantity) {
+  const response = await fetch(`${API_BASE_URL}/cart/add-to-cart`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ productId, quantity }),
   });
   return handleResponse(response);
 }
@@ -142,20 +150,34 @@ export async function clearCart(token) {
   return handleResponse(response);
 }
 
-//----EXPORT ALL----//
+export async function checkoutCart(token) {
+  const response = await fetch(`${API_BASE_URL}/cart/checkout`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse(response);
+}
 
+//----EXPORT ALL----//
 export default {
+  // User
   registerUser,
   loginUser,
   getUserDetails,
+
+  // Products
   fetchActiveProducts,
   fetchAllProducts,
   addProduct,
   updateProduct,
   toggleProductActive,
   deleteProduct,
+
+  // Cart
   getCart,
+  addToCart,        // ✅ Added here
   updateQuantity,
   removeFromCart,
-  clearCart
+  clearCart,
+  checkoutCart,
 };
