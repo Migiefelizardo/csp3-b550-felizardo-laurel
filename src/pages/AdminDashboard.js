@@ -17,27 +17,24 @@ export default function AdminDashboard({ user, token }) {
 
   const [editingProductId, setEditingProductId] = useState(null);
 
- useEffect(() => {
-  if (!token) return;
+  useEffect(() => {
+    if (!token) return;
 
-  console.log("Admin token:", token); // ✅ Debug log added here
-
-  async function fetchProducts() {
-    setLoading(true);
-    setError("");
-    try {
-      const data = await api.fetchAllProducts(token);
-      setProducts(data.products || data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    async function fetchProducts() {
+      setLoading(true);
+      setError("");
+      try {
+        const data = await api.fetchAllProducts(token);
+        setProducts(data.products || data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  fetchProducts();
-}, [token]);
-
+    fetchProducts();
+  }, [token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,6 +112,10 @@ export default function AdminDashboard({ user, token }) {
     <div className="admin-dashboard">
       <h1>Admin Dashboard</h1>
 
+      <button onClick={() => window.location.href = "/admin/orders"}>
+        Orders
+      </button>
+
       <form className="product-form" onSubmit={handleSubmit}>
         <h2>{editingProductId ? "Edit Product" : "Add New Product"}</h2>
         <input
@@ -163,7 +164,7 @@ export default function AdminDashboard({ user, token }) {
         </label>
         <div className="button-group">
           <button type="submit">
-            {editingProductId ? "Update Product" : "Add Product"}
+            {editingProductId ? "Update" : "Add product"}
           </button>
           {editingProductId && (
             <button type="button" onClick={resetForm}>
@@ -184,9 +185,9 @@ export default function AdminDashboard({ user, token }) {
               <small>Status: {product.active ? "Active" : "Inactive"}</small>
             </div>
             <div>
-              <button className="edit-btn" onClick={() => handleEditClick(product)}>Edit</button>
+              <button className="edit-btn" onClick={() => handleEditClick(product)}>Update</button>
               <button className="toggle-btn" onClick={() => toggleActive(product)}>
-                {product.active ? "Deactivate" : "Reactivate"}
+                {product.active ? "Disable" : "Activate"}
               </button>
               <button className="delete-btn" onClick={() => handleDelete(product._id)}>
                 Delete
