@@ -41,6 +41,7 @@
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
+  margin: 10px;
 }
 
 .admin-dashboard button:hover {

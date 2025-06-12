@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { registerUser } from '../services/api';
+import './Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -31,28 +32,30 @@ const Register = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <div className='container' style={{ display: 'flex', justifyContent: 'center' }}>
       <div>
-        <h2>Register</h2>
-        <form onSubmit={handleSubmit}>
-          <label>First Name:</label><br />
-          <input name="firstName" value={formData.firstName} onChange={handleChange} required /><br />
+        <h2 className='h2'>Register</h2>
+          <div className='register-container'>
+            <form onSubmit={handleSubmit}>
+              <label>First Name:</label><br />
+              <input name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="Enter your First Name" /><br />
 
-          <label>Last Name:</label><br />
-          <input name="lastName" value={formData.lastName} onChange={handleChange} required /><br />
+              <label>Last Name:</label><br />
+              <input name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="Enter your Last Name" /><br />
 
-          <label>Email:</label><br />
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required /><br />
+              <label>Email:</label><br />
+              <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Enter your email" /><br />
 
-          <label>Mobile No:</label><br />
-          <input name="mobileNo" value={formData.mobileNo} onChange={handleChange} required /><br />
+              <label>Mobile No:</label><br />
+              <input name="mobileNo" value={formData.mobileNo} onChange={handleChange} required placeholder="Enter your mobile number" /><br />
 
-          <label>Password:</label><br />
-          <input type="password" name="password" value={formData.password} onChange={handleChange} required /><br /><br />
+              <label>Password:</label><br />
+              <input type="password" name="password" value={formData.password} onChange={handleChange} required placeholder="Enter your password" /><br /><br />
 
-          <button type="submit">Register</button>
-        </form>
-        {message && <p>{message}</p>}
+              <button className='register-button' type="submit">Register</button>
+            </form>
+            {message && <p>{message}</p>}
+          </div>
       </div>
     </div>
   );
