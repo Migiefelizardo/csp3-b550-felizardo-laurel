@@ -8,6 +8,9 @@ import {
   checkoutCart,
 } from '../services/api';
 import CartItem from '../components/CartItem';
+import './CartPage.css';
+
+
 
 const CartPage = ({ token }) => {
   const [cart, setCart] = useState(null);
