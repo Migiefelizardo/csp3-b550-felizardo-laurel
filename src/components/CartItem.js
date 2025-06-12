@@ -1,11 +1,13 @@
 import React from 'react';
 
-const CartItem = ({ item, onQuantityChange, onRemove }) => {
+const CartItem = ({ item, onQuantityChange, onRemove, user }) => {
   if (!item.productId || typeof item.productId === 'string') {
     return (
       <li className="cart-item">
         <p>Product details missing.</p>
-        <button onClick={() => onRemove(item.productId)}>Remove</button>
+        <button onClick={() => onRemove(item.productId)} disabled={user?.isAdmin}>
+          Remove
+        </button>
         <hr />
       </li>
     );
@@ -31,10 +33,13 @@ const CartItem = ({ item, onQuantityChange, onRemove }) => {
           min="1"
           value={item.quantity}
           onChange={handleChange}
+          disabled={user?.isAdmin}
         />
       </label>
       <p>Subtotal: ${item.subtotal.toFixed(2)}</p>
-      <button onClick={() => onRemove(_id)}>Remove</button>
+      <button onClick={() => onRemove(_id)} disabled={user?.isAdmin}>
+        Remove
+      </button>
       <hr />
     </li>
   );

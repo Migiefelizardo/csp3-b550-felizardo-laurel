@@ -11,33 +11,43 @@ import CartItem from '../components/CartItem';
 
 const CartPage = ({ token }) => {
   const [cart, setCart] = useState(null);
+  const [user, setUser] = useState(null);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCart = async () => {
+    const fetchCartAndUser = async () => {
       try {
-        const data = await getCart(token);
-        if (data.cart) {
-          setCart(data.cart);
+        if (token) {
+          const cartData = await getCart(token);
+          setCart(cartData.cart || { cartItems: [], totalPrice: 0 });
+
+          const res = await fetch('http://localhost:4000/users/details', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!res.ok) throw new Error('Failed to fetch user');
+
+          const userData = await res.json();
+          setUser(userData);
         } else {
           setCart({ cartItems: [], totalPrice: 0 });
         }
       } catch (err) {
         console.error(err);
-        setMessage('Failed to load cart.');
+        setMessage('Failed to load cart or user.');
       }
     };
 
-    if (token) fetchCart();
+    fetchCartAndUser();
   }, [token]);
 
   const handleQuantityChange = async (productId, newQty) => {
     try {
       const data = await updateQuantity(token, productId, newQty);
-      if (data.cart) {
-        setCart(data.cart);
-      }
+      if (data.cart) setCart(data.cart);
     } catch (err) {
       console.error(err);
       setMessage('Could not update quantity.');
@@ -47,9 +57,7 @@ const CartPage = ({ token }) => {
   const handleRemove = async (productId) => {
     try {
       const data = await removeFromCart(token, productId);
-      if (data.cart) {
-        setCart(data.cart);
-      }
+      if (data.cart) setCart(data.cart);
     } catch (err) {
       console.error(err);
       setMessage('Could not remove item.');
@@ -59,9 +67,7 @@ const CartPage = ({ token }) => {
   const handleClear = async () => {
     try {
       const data = await clearCart(token);
-      if (data.cart) {
-        setCart(data.cart);
-      }
+      if (data.cart) setCart(data.cart);
     } catch (err) {
       console.error(err);
       setMessage('Could not clear cart.');
@@ -99,7 +105,10 @@ const CartPage = ({ token }) => {
           </ul>
           <h3>Total: ${cart.totalPrice.toFixed(2)}</h3>
           <div className="cart-buttons">
-            <button onClick={handleCheckout}>Checkout</button>
+            {/* Show Checkout button only if user is non-admin */}
+            {user && !user.isAdmin && (
+              <button onClick={handleCheckout}>Checkout</button>
+            )}
             <button onClick={handleClear}>Clear Cart</button>
           </div>
         </>

@@ -1,25 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { addToCart } from '../services/api';
+import './ProductsCatalog.css'; // 👈 Import the CSS
 
 function ProductsCatalog({ token }) {
   const [products, setProducts] = useState([]);
   const [status, setStatus] = useState('loading');
   const [message, setMessage] = useState('');
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch('https://aecd097kaa.execute-api.us-west-2.amazonaws.com/production/products/active')
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch products');
-        return res.json();
-      })
-      .then(data => {
+    const fetchData = async () => {
+      try {
+        const productsRes = await fetch('http://localhost:4000/products/active');
+        if (!productsRes.ok) throw new Error('Failed to fetch products');
+        const data = await productsRes.json();
         setProducts(Array.isArray(data) ? data : data.products || []);
         setStatus('success');
-      })
-      .catch(() => setStatus('error'));
-  }, []);
+      } catch (err) {
+        console.error(err);
+        setStatus('error');
+      }
+    };
+
+    const fetchUser = async () => {
+      try {
+        const userRes = await fetch('http://localhost:4000/users/details', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!userRes.ok) throw new Error('Failed to fetch user');
+        const userData = await userRes.json();
+        setUser(userData);
+      } catch (err) {
+        console.error('User not logged in or fetch failed:', err.message);
+        setUser(null);
+      }
+    };
+
+    fetchData();
+    if (token) fetchUser();
+  }, [token]);
 
   const handleAddToCart = async (productId) => {
+    if (user?.isAdmin) {
+      setMessage('Admins cannot add items to the cart.');
+      return;
+    }
+
     if (!token) {
       setMessage('You must be logged in to add items to your cart.');
       return;
@@ -39,49 +67,30 @@ function ProductsCatalog({ token }) {
   if (products.length === 0) return <p>No products found.</p>;
 
   return (
-    <div style={{ padding: 20 }}>
-      {message && <p style={{ color: 'green' }}>{message}</p>}
+    <div className="catalog-container">
+      {message && (
+        <p className={`catalog-message ${message.includes('cannot') || message.includes('Failed') ? 'error' : 'success'}`}>
+          {message}
+        </p>
+      )}
 
-      <div
-        role="list"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-          gap: 20,
-        }}
-      >
-        {products.map(product => (
-          <div
-            key={product.id || product._id}
-            role="listitem"
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: 8,
-              padding: 10,
-              boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-            }}
-          >
-            <h3 style={{ margin: '10px 0 5px' }}>{product.name}</h3>
-            <p style={{ fontWeight: 'bold' }}>
+      <div className="catalog-grid" role="list">
+        {products.map((product) => (
+          <div key={product._id || product.id} className="catalog-item" role="listitem">
+            <h3>{product.name}</h3>
+            <p className="price">
               ${typeof product.price === 'number' ? product.price.toFixed(2) : 'N/A'}
             </p>
-            <p style={{ fontSize: 14, color: '#555' }}>
-              {product.description || 'No description available.'}
-            </p>
-            <button
-              onClick={() => handleAddToCart(product._id || product.id)}
-              style={{
-                marginTop: 10,
-                padding: '6px 12px',
-                backgroundColor: '#007bff',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 4,
-                cursor: 'pointer',
-              }}
-            >
-              Add to Cart
-            </button>
+            <p className="description">{product.description || 'No description available.'}</p>
+
+            {token && user && !user.isAdmin && (
+              <button
+                onClick={() => handleAddToCart(product._id || product.id)}
+                className="catalog-button"
+              >
+                Add to Cart
+              </button>
+            )}
           </div>
         ))}
       </div>
