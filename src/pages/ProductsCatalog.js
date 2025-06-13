@@ -11,7 +11,7 @@ function ProductsCatalog({ token }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsRes = await fetch('http://localhost:4000/products/active');
+        const productsRes = await fetch('https://aecd097kaa.execute-api.us-west-2.amazonaws.com/production/products/active');
         if (!productsRes.ok) throw new Error('Failed to fetch products');
         const data = await productsRes.json();
         setProducts(Array.isArray(data) ? data : data.products || []);
@@ -24,7 +24,7 @@ function ProductsCatalog({ token }) {
 
     const fetchUser = async () => {
       try {
-        const userRes = await fetch('http://localhost:4000/users/details', {
+        const userRes = await fetch('https://aecd097kaa.execute-api.us-west-2.amazonaws.com/production/users/details', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

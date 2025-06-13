@@ -25,7 +25,7 @@ const CartPage = ({ token }) => {
           const cartData = await getCart(token);
           setCart(cartData.cart || { cartItems: [], totalPrice: 0 });
 
-          const res = await fetch('http://localhost:4000/users/details', {
+          const res = await fetch('https://aecd097kaa.execute-api.us-west-2.amazonaws.com/production/users/details', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
