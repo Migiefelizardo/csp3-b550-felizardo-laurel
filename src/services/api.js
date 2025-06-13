@@ -1,5 +1,5 @@
-// const API_BASE_URL = 'https://aecd097kaa.execute-api.us-west-2.amazonaws.com/production';
-const API_BASE_URL = 'http://localhost:4000';
+const API_BASE_URL = 'https://aecd097kaa.execute-api.us-west-2.amazonaws.com/production';
+// const API_BASE_URL = 'http://localhost:4000';
 
 //----HELPER----//
 async function handleResponse(response) {
