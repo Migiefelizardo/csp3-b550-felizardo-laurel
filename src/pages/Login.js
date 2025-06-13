@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser, getUserDetails } from '../services/api'; // make sure getUserDetails is exported
+import './Login.css';
 
 const Login = ({ setUser, setToken }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -33,30 +34,34 @@ const Login = ({ setUser, setToken }) => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto' }}>
+    <div className='container' style={{ maxWidth: '400px', margin: 'auto' }} >
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Email:</label><br />
-        <input
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        /><br />
+      <div className='login-container'>
+        <form onSubmit={handleSubmit}>
+          <label>Email:</label><br />
+          <input
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            placeholder="Enter your email"
+          /><br />
 
-        <label>Password:</label><br />
-        <input
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        /><br /><br />
+          <label>Password:</label><br />
+          <input
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            placeholder="Enter your password"
+          /><br /><br />
 
-        <button type="submit">Login</button>
-      </form>
-      {message && <p>{message}</p>}
+          <button className='login-button' type="submit">Login</button>
+        </form>
+        {message && <p>{message}</p>}
+      </div>
     </div>
   );
 };

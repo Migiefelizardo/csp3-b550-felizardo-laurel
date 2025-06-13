@@ -52,3 +52,7 @@
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
+
+span {
+  color: white;
+}

@@ -32,7 +32,7 @@ const Navbar = ({ user, setUser, setToken }) => {
               Admin
             </NavLink>
           )}
-          <span className="navbar-user">Hi, {user.email}</span>
+          <span className="navbar-user">Hi, {user.firstName}</span>
           <button className="navbar-logout" onClick={handleLogout}>
             Logout
           </button>
