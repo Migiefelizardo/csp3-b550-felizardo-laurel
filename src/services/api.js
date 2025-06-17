@@ -102,6 +102,12 @@ export async function deleteProduct(productId, token) {
   return handleResponse(response);
 }
 
+//  NEW FUNCTION ADDED
+export async function getProductById(productId) {
+  const response = await fetch(`${API_BASE_URL}/products/${productId}`);
+  return handleResponse(response);
+}
+
 //----CART API----//
 export async function getCart(token) {
   const response = await fetch(`${API_BASE_URL}/cart/get-cart`, {
@@ -172,10 +178,11 @@ export default {
   updateProduct,
   toggleProductActive,
   deleteProduct,
+  getProductById,   //  added here
 
   // Cart
   getCart,
-  addToCart,        // ✅ Added here
+  addToCart,
   updateQuantity,
   removeFromCart,
   clearCart,
